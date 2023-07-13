@@ -1,3 +1,7 @@
+import os
+import pandas as pd
+
+
 def get_subject_freesurfer_stats(stats_file_path):
     """
     Extract volumetric information on the file 'aseg.stats' from a single subject freesurfer processed data
