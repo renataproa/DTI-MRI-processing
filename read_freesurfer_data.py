@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+import numpy as np
+import nibabel as nib
 
 
 def get_subject_freesurfer_stats(stats_file_path):
