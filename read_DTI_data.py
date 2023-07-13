@@ -1,6 +1,6 @@
 import nibabel as nib
 
-def get_DTI_space_voxels_dims(dti_file_path):
+def get_DTI_space_vox_dims(dti_file_path):
     """
     Calculates the dimentions of the DTI voxel in mm3 in the diffusion space.
     
