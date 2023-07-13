@@ -54,4 +54,57 @@ def get_freesurfer_stats(data_dir, num_subjects = False, subject_list = False):
     stats = {entry[0]: entry[1] for entry in subjects_stats}
              
     return stats
+
+def calculate_brain_vol_T1(T1_file_path):
+    """
+    Calculates the brain volume using the T1 image.
+    
+    Parameters: 
+    T1_file_path (str): path to a T1 image nii file (.nii.gz). 
+    Returns:
+    total_brain_vol_T1 (float): calculated brain volume in mm3 from T1 image.
+    
+    """
+    nii_data = nib.load(T1_file_path) 
+    data_T1 = nii_data.get_fdata()
+    
+    empty = len(np.where(data_T1 == 0)[0]) 
+    total = data_T1.shape[0]*data_T1.shape[1]*data_T1.shape[2]
+    mask = total - empty
+    header = nii_data.header
+    T1_vox_dims = header.get_zooms() #get the voxel sizes in millimeters in T1 space
+    T1_vox_mm3 = T1_vox_dims[0]*T1_vox_dims[1]*T1_vox_dims[2]
+    total_brain_vol_T1 = mask*T1_vox_mm3    
+    
+    return total_brain_vol_T1
+
+
+def calculate_brain_vol_FSmask(FSseg_file_path, vox_dims):
+    """
+    Calculates the brain volume using the FreeSurfer segmentation mask.
+    
+    Parameters: 
+    FSseg_file_path (str): path to the FreeSurfer segmentation nii file (.nii.gz).
+    vox_dims: voxel dimensions in mm3 (depends on what space the segmentation is in. 
+              For example: if the segmenation is in the diffusion space, the vox_dims 
+              is the voxel dimension in the diffusion space).  
+    Returns:
+    total_brain_vol (float): calculated brain volume in mm3 from the FreeSurfer segmentation mask.
+    
+    """
+    nii_data = nib.load(FSseg_file_path) 
+    FSseg = nii_data.get_fdata().squeeze() #volume
+    
+    empty = len(np.where(FSseg == 0)[0])
+    total = FSseg.shape[0]*FSseg.shape[1]*FSseg.shape[2]
+    mask = total - empty
+    total_brain_vol = mask*vox_dims
+    
+    return total_brain_vol
+
+
+
+
+
+
     
