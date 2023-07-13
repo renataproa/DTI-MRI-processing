@@ -103,6 +103,35 @@ def calculate_brain_vol_FSmask(FSseg_file_path, vox_dims):
     return total_brain_vol
 
 
+def int_to_onehot(matrix, onehot_type=np.dtype(np.float32)):
+    #Thanks to Gustavo
+    
+    labels = np.unique(matrix)
+    vec_len = len(labels)
+    onehot = np.zeros((vec_len,) + matrix.shape, dtype=onehot_type)  
+    for i, label in enumerate(labels):
+        onehot[i] = (matrix == label)   
+    return labels, onehot
+
+def get_freesurfer_masks(FSseg_file_path):
+    """
+    Gets the ROIs' masks from the Freesurfer Segmentation.
+    
+    Parameters: 
+    FSseg_file_path (str): path to the FreeSurfer sugmentation nii file (.nii.gz).
+  
+    Returns:
+    FSseg_onehot (numpy array): onehot encoded masks for ROIs
+    labels (numpy array): list of ROIs' labels
+    
+    """
+    
+    nii_data = nib.load(FSseg_file_path)
+    FS_seg = nii_data.get_fdata().squeeze() #volume
+    labels, FSseg_onehot = int_to_onehot(FS_seg, onehot_type=np.dtype(np.bool))
+    
+    return FSseg_onehot, labels
+
 
 
 
